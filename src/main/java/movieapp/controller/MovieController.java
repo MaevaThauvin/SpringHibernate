@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import movieapp.entity.Movie;
 import movieapp.persistence.MovieRepository;
 
+@Transactional
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
@@ -63,7 +65,7 @@ public class MovieController {
 			 m.setTitle(movie.getTitle());
 			 m.setYear(movie.getYear());
 			 m.setDuration(movie.getDuration());
-			 movieRepository.flush();
+//			 movieRepository.flush();
 		 });
 		// TODO persist modified object
 		return optMovieDb;
