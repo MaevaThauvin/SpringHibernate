@@ -72,9 +72,20 @@ public class MovieController {
 	}
 	
 	@DeleteMapping
-	public Movie deleteMovie(@RequestBody Movie movie) {
+	public Optional<Movie> deleteMovie(@RequestBody Movie movie) {
 		//TODO persist delete object
-		return movie;
+		return deleteMovieById(movie.getId());
+	}
+	
+	/**
+	 * url /api/movies/1
+	 */
+	
+	@DeleteMapping("/{id}")
+	public Optional<Movie> deleteMovieById(@PathVariable("id") int id){
+		Optional<Movie> optMovieDb = movieRepository.findById(id);
+		optMovieDb.ifPresent(m -> movieRepository.deleteById(m.getId()));
+		return optMovieDb;
 	}
 	
 }
