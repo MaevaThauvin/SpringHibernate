@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -36,6 +37,17 @@ class MovieRepositoryTest {
 		// given
 		String title = "Blade Runner";
 		int duration = 173;
+		// when + then
+		saveAssertMovie(title, year, duration);
+	}
+	
+	@ParameterizedTest
+	@ValueSource(ints = { 1888, 1982, Integer.MAX_VALUE })
+	@NullSource
+	void testSaveTitle(Integer duration) {
+		// given
+		String title = "Blade Runner";
+		int year = 1982;
 		// when + then
 		saveAssertMovie(title, year, duration);
 	}
