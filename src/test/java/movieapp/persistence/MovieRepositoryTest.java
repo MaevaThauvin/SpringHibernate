@@ -31,23 +31,23 @@ class MovieRepositoryTest {
 		saveAssertMovie(title, year, duration);
 	}
 	
-	@ParameterizedTest
-	@ValueSource(ints = { 1888, 1982, Integer.MAX_VALUE })
-	void testSaveTitle(int year) {
-		// given
-		String title = "Blade Runner";
+
+	@Test
+	void testSaveTitleEmptyNOK() {
+		String title = null;
+		int year = 1982;
 		int duration = 173;
-		// when + then
-		saveAssertMovie(title, year, duration);
+		assertThrows(DataIntegrityViolationException.class, 
+				() -> saveAssertMovie(title, year, duration));
 	}
+	
 	
 	@ParameterizedTest
 	@ValueSource(ints = { 1888, 1982, Integer.MAX_VALUE })
-	@NullSource
-	void testSaveDuration(Integer duration) {
+	void testSaveYear(int year) {
 		// given
 		String title = "Blade Runner";
-		int year = 1982;
+		int duration = 173;
 		// when + then
 		saveAssertMovie(title, year, duration);
 	}
@@ -61,16 +61,18 @@ class MovieRepositoryTest {
 				() -> saveAssertMovie(title, year, duration));
 	}
 	
-
-	@Test
-	void testSaveTitleEmptyNOK() {
-		String title = null;
+	@ParameterizedTest
+	@ValueSource(ints = { 1888, 1982, Integer.MAX_VALUE })
+	@NullSource
+	void testSaveDuration(Integer duration) {
+		// given
+		String title = "Blade Runner";
 		int year = 1982;
-		int duration = 173;
-		assertThrows(DataIntegrityViolationException.class, 
-				() -> saveAssertMovie(title, year, duration));
+		// when + then
+		saveAssertMovie(title, year, duration);
 	}
 	
+
 	private void saveAssertMovie(String title, Integer year, Integer duration) {
 		Movie movie = new Movie(title, year, duration);
 		// when
