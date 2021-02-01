@@ -44,7 +44,7 @@ class MovieRepositoryTest {
 	@ParameterizedTest
 	@ValueSource(ints = { 1888, 1982, Integer.MAX_VALUE })
 	@NullSource
-	void testSaveTitle(Integer duration) {
+	void testSaveDuration(Integer duration) {
 		// given
 		String title = "Blade Runner";
 		int year = 1982;
