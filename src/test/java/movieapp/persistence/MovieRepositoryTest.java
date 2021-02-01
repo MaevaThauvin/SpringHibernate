@@ -41,7 +41,7 @@ class MovieRepositoryTest {
 	}
 	
 	@Test
-	void testSaveYearNOK() {
+	void testSaveYearNullNOK() {
 		String title = "Blade runner";
 		Integer year = null;
 		int duration = 173;
