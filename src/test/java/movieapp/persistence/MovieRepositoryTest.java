@@ -2,6 +2,10 @@ package movieapp.persistence;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
@@ -17,6 +21,37 @@ class MovieRepositoryTest {
 
 	@Autowired
 	private MovieRepository movieRepository;
+	
+	@Autowired
+	private EntityManager entityManager;
+	
+	@Test
+	void testFindByTitle() {
+		//given
+		// 1 - a title of movies to read in the test
+		String title = "The man who knew too Much";
+		// 2 - writing data in database via the entitymanager
+		var moviesDataBase = List.of(
+				new Movie(title, 1934, null),
+				new Movie(title, 1956, null),
+				new Movie("The Man Whoo Knew Too Little", 1997, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when : read from the repository
+		var moviesFound = movieRepository.findByTitle(title);
+		//then
+		assertAll(
+				() -> assertEquals(2, moviesFound.size()),
+				() -> assertEquals(title, moviesFound.get(0).getTitle())
+				);
+		assertAll(moviesFound.stream().map(
+				m -> () -> assertEquals(title, m.getTitle(), "title")
+				));
+//		for (Movie m: moviesFound) {
+//			assertEquals(title, m.getTitle(), "title");
+//		}
+	}
 	
 	@ParameterizedTest
 	@ValueSource(strings = {
