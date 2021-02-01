@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-class TestOptional {
+class OptionalTest {
 
 	@Test
 	void testEmptyOptional() {

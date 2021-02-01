@@ -12,7 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import movieapp.entity.Movie;
 
 @DataJpaTest
-class TestMovieRepository {
+class MovieRepositoryTest {
 
 	@Autowired
 	private MovieRepository movieRepository;
@@ -30,6 +30,17 @@ class TestMovieRepository {
 		saveAssertMovie(title, year, duration);
 	}
 	
+	@ParameterizedTest
+	@ValueSource(ints = { 1888, 1982, Integer.MAX_VALUE })
+	void testSaveTitle(int year) {
+		// given
+		String title = "Blade Runner";
+		int duration = 173;
+		// when + then
+		saveAssertMovie(title, year, duration);
+	}
+	
+
 	@Test
 	void testSaveTitleEmptyNOK() {
 		String title = null;
