@@ -40,6 +40,15 @@ class MovieRepositoryTest {
 		saveAssertMovie(title, year, duration);
 	}
 	
+	@Test
+	void testSaveYearNOK() {
+		String title = "Blade runner";
+		Integer year = null;
+		int duration = 173;
+		assertThrows(DataIntegrityViolationException.class, 
+				() -> saveAssertMovie(title, year, duration));
+	}
+	
 
 	@Test
 	void testSaveTitleEmptyNOK() {
