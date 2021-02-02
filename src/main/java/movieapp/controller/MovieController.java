@@ -26,7 +26,7 @@ import movieapp.persistence.MovieRepository;
 public class MovieController {
 	
 	@Autowired
-	private MovieRepository movieRepository;
+	private MovieRepository movieRepository;	
 	
 	/**
 	 * url /api/movies

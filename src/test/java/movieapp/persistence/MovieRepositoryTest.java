@@ -41,16 +41,10 @@ class MovieRepositoryTest {
 		//when : read from the repository
 		var moviesFound = movieRepository.findByTitle(title);
 		//then
-		assertAll(
-				() -> assertEquals(2, moviesFound.size()),
-				() -> assertEquals(title, moviesFound.get(0).getTitle())
-				);
+		assertEquals(2, moviesFound.size());
 		assertAll(moviesFound.stream().map(
 				m -> () -> assertEquals(title, m.getTitle(), "title")
 				));
-//		for (Movie m: moviesFound) {
-//			assertEquals(title, m.getTitle(), "title");
-//		}
 	}
 	
 	@ParameterizedTest
