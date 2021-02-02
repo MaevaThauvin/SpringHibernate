@@ -87,11 +87,11 @@ class MovieRepositoryTest {
 		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
 		entityManager.flush();
 		//when : read from the repo
-		var moviesFound = movieRepository.findByYearGreaterThan(year);
+		var moviesFound = movieRepository.findByYearGreaterThanEqual(year);
 		//then
 		assertEquals(3, moviesFound.size());
 		assertAll(moviesFound.stream().map(
-					m -> () -> assertTrue(m.getYear() > year)));
+					m -> () -> assertTrue(m.getYear() >= year)));
 		
 	}
 	
@@ -123,7 +123,7 @@ class MovieRepositoryTest {
 	}
 	
 	@Test
-	void testFindByTitleAndYearEqualsIgnoreCase() {
+	void testFindByTitleIgnoreCaseAndYearEquals() {
 		//given
 		// 1 - a year of movie to read in the test
 		String title = "The Lion King";

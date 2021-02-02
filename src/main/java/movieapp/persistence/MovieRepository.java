@@ -24,7 +24,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer>{
 	List<Movie> findByTitleContainingIgnoreCase(String title);
 	
 //	where year >= 2000
-	List<Movie> findByYearGreaterThan(int year);
+	List<Movie> findByYearGreaterThanEqual(int year);
 	
 //	where year between 2000 and 2009
 	List<Movie> findByYearBetween(int min, int max);
@@ -34,5 +34,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer>{
 	
 //	where duration is null
 	List<Movie> findByDurationIsNull();
+	
+	List<Movie> findByYearLessThanEqual(int max);
 
 }

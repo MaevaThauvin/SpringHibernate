@@ -2,6 +2,7 @@ package movieapp.controller;
 
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,49 @@ public class MovieController {
 	@GetMapping("/byTitle")
 	public List<Movie> moviesByTitle(@RequestParam("t") String title){
 		return movieRepository.findByTitle(title);
-		
+	}
+	/**
+	 * path /api/movies/byTitleYear?t=Spectre&y=2015
+	 * @param title
+	 * @param year
+	 * @return
+	 */
+	
+	@GetMapping("/byTitleYear")
+	public List<Movie> moviesByTitleYear(@RequestParam("t") String title,
+										@RequestParam(value="y", required=false) Integer year){
+		if(Objects.isNull(year)) {
+			return movieRepository.findByTitle(title);
+		}
+		else {
+			return movieRepository.findByTitleIgnoreCaseAndYearEquals(title, year);
+		}
+	}
+	
+	/**
+	 * path api/movies/byYear?min=2000&max=2005
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	@GetMapping("/byYear")
+	public List<Movie> moviesByYearBetweenMinMax(@RequestParam(value="min", required=false) Integer min, 
+			@RequestParam(value="max", required=false) Integer max){
+		if(Objects.nonNull(min)) {
+			if(Objects.nonNull(max)) {
+				return movieRepository.findByYearBetween(min, max);
+			}
+			else {
+				return movieRepository.findByYearGreaterThanEqual(min);
+			}
+		}
+		if(Objects.nonNull(max)) {
+				return movieRepository.findByYearLessThanEqual(max);
+		}
+		else {
+			return List.of();
+		}
+				
 	}
 	
 	@PostMapping
