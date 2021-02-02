@@ -47,6 +47,129 @@ class MovieRepositoryTest {
 				));
 	}
 	
+	@Test
+	void testFindByTitleContainingIgnoreCase() {
+		//given
+		// 1 - a title of movies to read in the test
+		String titlePart = "man";
+		// 2 - writing data in database via the entitymanager
+		var moviesDataBase = List.of(
+				new Movie("The Man Who Knew Too Much", 1934, null),
+				new Movie("The invisible Man", 2020, null),
+				new Movie("Wonder Woman 1984", 2020, null),
+				new Movie("Men In Black", 1997, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when : read from the repository
+		var moviesFound = movieRepository.findByTitleContainingIgnoreCase(titlePart);
+		//then
+		assertEquals(3, moviesFound.size());
+		assertAll(moviesFound.stream().map(
+				m -> () -> assertTrue(
+						m.getTitle().toLowerCase().contains(titlePart),
+						titlePart+" not in title")
+				));
+	}
+	
+	@Test
+	void testFindByYearGreaterThan() {
+		//given
+		// 1 - a year of movie to read in the test
+		int year = 2000;
+		// 2 - writing data in database via the entity manager
+		var moviesDataBase = List.of(
+				new Movie("The Man Who Knew Too Much", 1934, null),
+				new Movie("The invisible Man", 2001, null),
+				new Movie("Wonder Woman 1984", 2100, null),
+				new Movie("Men In Black", 2020, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when : read from the repo
+		var moviesFound = movieRepository.findByYearGreaterThan(year);
+		//then
+		assertEquals(3, moviesFound.size());
+		assertAll(moviesFound.stream().map(
+					m -> () -> assertTrue(m.getYear() > year)));
+		
+	}
+	
+	@Test
+	void testFindByYearBetween() {
+		//given
+		// 1 - a year of movie to read in the test
+		int min = 2000;
+		int max = 2009;
+		// 2 - writing data in database via the entity manager
+		var moviesDataBase = List.of(
+				new Movie("The Man Who Knew Too Much", 1934, null),
+				new Movie("The invisible Man", 2000, null),
+				new Movie("Wonder Woman 1984", 2009, null),
+				new Movie("Men In Black", 2020, null),
+				new Movie("Men In Black", 2004, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when : read from the repo
+		var moviesFound = movieRepository.findByYearBetween(min, max);
+		//then
+		assertEquals(3, moviesFound.size());
+		assertAll(moviesFound.stream().map(
+					m -> () -> assertTrue(m.getYear() >= min)));
+		assertAll(moviesFound.stream().map(
+				m -> () -> assertTrue(m.getYear() <= max)));
+		
+	}
+	
+	@Test
+	void testFindByTitleAndYearEqualsIgnoreCase() {
+		//given
+		// 1 - a year of movie to read in the test
+		String title = "The Lion King";
+		int year = 1994;
+		// 2 - writing data in database via the entity manager
+		var moviesDataBase = List.of(
+				new Movie("The Man Who Knew Too Much", 1934, null),
+				new Movie("The invisible Man", 2000, null),
+				new Movie("THE LION KING", 1994, null),
+				new Movie("The Lion King", 1994, null),
+				new Movie("The Lion King ", 2020, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when : read from the repo
+		var moviesFound = movieRepository.findByTitleIgnoreCaseAndYearEquals(title, year);
+		//then
+		assertEquals(2, moviesFound.size());
+		assertAll(moviesFound.stream().map(
+					m -> () -> assertTrue(m.getTitle().toLowerCase().equals(title.toLowerCase()))));
+		assertAll(moviesFound.stream().map(
+				m -> () -> assertTrue(m.getYear().equals(year))));
+		
+	}
+	
+	@Test
+	void testFindByDurationIsNull() {
+		// 1- given null duration
+		// 2 - writing data in database via the entity manager
+		var moviesDataBase = List.of(
+				new Movie("The Man Who Knew Too Much", 1934, null),
+				new Movie("The invisible Man", 2000, 178),
+				new Movie("THE LION KING", 1994, 60),
+				new Movie("The Lion King", 1994, null),
+				new Movie("The Lion King ", 2020, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when : read from the repo
+		var moviesFound = movieRepository.findByDurationIsNull();
+		//then
+		assertEquals(3, moviesFound.size());
+		assertAll(moviesFound.stream().map(
+					m -> () -> assertTrue(m.getDuration()==null)));
+	}
+	
 	@ParameterizedTest
 	@ValueSource(strings = {
 			"Z", 
