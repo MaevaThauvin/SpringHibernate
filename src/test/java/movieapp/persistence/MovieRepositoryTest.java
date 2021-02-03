@@ -13,6 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import movieapp.entity.Movie;
 
@@ -112,7 +114,7 @@ class MovieRepositoryTest {
 		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
 		entityManager.flush();
 		//when : read from the repo
-		var moviesFound = movieRepository.findByYearBetween(min, max);
+		var moviesFound = movieRepository.findByYearBetweenOrderByYear(min, max);
 		//then
 		assertEquals(3, moviesFound.size());
 		assertAll(moviesFound.stream().map(
@@ -121,6 +123,29 @@ class MovieRepositoryTest {
 				m -> () -> assertTrue(m.getYear() <= max)));
 		
 	}
+	
+	@Test
+	void testFindByYearBetweenSort() {
+		var moviesDataBase = List.of(
+				new Movie("Dr No", 1962, 110),
+				new Movie("License to Kill", 1989, 130),
+				new Movie("The Spy Who Loved Me", 1977, 125),
+				new Movie("GoldenEye", 1995, 130),
+				new Movie("Spectre", 2015, 148));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when
+		var moviesByYear = movieRepository.findByYearBetween(1960, 2020, Sort.by("year"));
+		System.out.println("Movies by year : "+moviesByYear);
+		var moviesByDuration = movieRepository.findByYearBetween(
+				1960, 2020, Sort.by(Direction.DESC, "duration"));		
+		System.out.println("Movies by Duration : "+moviesByDuration);
+		var moviesByDurationTitle = movieRepository.findByYearBetween(
+				1960, 2020, Sort.by("duration", "title"));		
+		System.out.println("Movies by DurationTitle : "+moviesByDurationTitle);
+	}
+	
 	
 	@Test
 	void testFindByTitleIgnoreCaseAndYearEquals() {
@@ -168,6 +193,24 @@ class MovieRepositoryTest {
 		assertEquals(3, moviesFound.size());
 		assertAll(moviesFound.stream().map(
 					m -> () -> assertTrue(m.getDuration()==null)));
+	}
+	
+	@Test
+	void testFindByYearOrderByTitle() {
+		int year=2020;
+		var moviesDataBase = List.of(
+				new Movie("Dr No", 1962, 178),
+				new Movie("Tyler Rake", 2020, 178),
+				new Movie("The Invisible Man", 2020, 60),
+				new Movie("Outside the wire", 2021, null),
+				new Movie("Wonder Woman 1984", 2020, null),
+				new Movie("Tenet", 2020, null));
+		//ask to each movie of the list movies to apply persist method from entityManager
+		moviesDataBase.forEach(entityManager::persist); // persist method >> SQL : insert for each movie
+		entityManager.flush();
+		//when
+		var movies = movieRepository.findByYearOrderByTitle(year);
+		System.out.println(movies);
 	}
 	
 	@ParameterizedTest

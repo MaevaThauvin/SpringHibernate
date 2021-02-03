@@ -91,7 +91,7 @@ public class MovieController {
 			@RequestParam(value="max", required=false) Integer max){
 		if(Objects.nonNull(min)) {
 			if(Objects.nonNull(max)) {
-				return movieRepository.findByYearBetween(min, max);
+				return movieRepository.findByYearBetweenOrderByYear(min, max);
 			}
 			else {
 				return movieRepository.findByYearGreaterThanEqual(min);

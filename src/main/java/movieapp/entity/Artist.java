@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class Artist {
@@ -45,7 +47,7 @@ public class Artist {
 		this.id = id;
 	}
 
-	@Column(nullable = false)
+	@Column(nullable = false, length=150)
 	public String getName() {
 		return name;
 	}
@@ -53,7 +55,9 @@ public class Artist {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	//@Temporal(TemporalType.DATE) //if types java.utile.Date or java.utile.Calendar used
+	@Column(nullable = true)
 	public LocalDate getBirthdate() {
 		return birthdate;
 	}
@@ -62,6 +66,7 @@ public class Artist {
 		this.birthdate = birthdate;
 	}
 
+	@Column(nullable = true)
 	public LocalDate getDeathdate() {
 		return deathdate;
 	}
