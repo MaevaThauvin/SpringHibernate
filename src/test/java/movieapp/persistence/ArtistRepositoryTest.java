@@ -32,7 +32,8 @@ class ArtistRepositoryTest {
 		artists = List.of(
 				new Artist("Steve McQueen", LocalDate.of(1930, 3, 24), LocalDate.of(1980, 11, 7)),
 				new Artist("Steve McQueen", LocalDate.of(1969, 10, 9)),
-				new Artist("Alfred Hitchcock"));
+				new Artist("Alfred Hitchcock"),
+				new Artist("Steven R. McQueen"));
 		artists.forEach(entityManager::persist);
 		entityManager.flush();
 		ids = artists.stream()
@@ -80,6 +81,29 @@ class ArtistRepositoryTest {
 		var artistsFound = artistRepository.getOne(id);
 		System.out.println(artistsFound);
 		//TODO assert
+	}
+	
+	@Test
+	void test() {
+		String name = "Steve McQueen";
+		var artists = artistRepository.findByNameIgnoreCase(name);
+		System.out.println(artists);
+//		for (var a: artists) {
+//			assertEquals(name, a.getName());
+//		}
+		//équivalence en stram et map de la boucle for each du dessus
+		assertAll(artists.stream()
+		.map(a -> () -> assertEquals(name, a.getName())));
+	}
+	
+	@Test
+	void testFindByNameEndingWithIgnoreCase() {
+		String name = "mcqueen";
+		var artists = artistRepository.findByNameEndingWithIgnoreCase(name); 
+		assertAll(artists
+				//.map(a->{System.out.println(a);return a;})
+				.filter(a->{System.out.println(a);return true;})
+				.map(a->()->assertTrue(a.getName().toLowerCase().endsWith(name))));
 	}
 
 }

@@ -1,10 +1,13 @@
-package movieapp.entity;
+ package movieapp.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 // POJO: Plain Old Java Object
@@ -17,8 +20,7 @@ public class Movie {
 	private String title;
 	private Integer year;
 	private Integer duration;
-	
-	private String director;
+	private Artist director;
 	
 	public Movie() {
 		super();
@@ -67,12 +69,15 @@ public class Movie {
 		this.duration = duration;
 	}
 	
-	@Transient
-	public String getDirector() {
+	//@Transient
+	//@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne
+	@JoinColumn(name="id_director", nullable=true)
+	public Artist getDirector() {
 		return director;
 	}
 
-	public void setDirector(String director) {
+	public void setDirector(Artist director) {
 		this.director = director;
 	}
 
