@@ -60,5 +60,43 @@ class MovieRepositoryDirectorUpdatingTest {
 		System.out.println(movieRead+" with director: "+movieRead.getDirector());
 		assertNotNull(movieRead.getDirector());
 	}
+	
+	@Test
+	void testSetDirectorWithExistingMovieAndArtist() {
+		//write data in database
+		Artist artist = new Artist("Clint Eastwodd", LocalDate.of(1930, 5, 31));
+		Movie movie = new Movie("Unforgiven", 1992, 130);
+		entityManager.persist(artist);
+		entityManager.persist(movie);
+		entityManager.flush();
+		int idArtist = artist.getId();
+		int idMovie = movie.getId();
+		// clear hibernate cash to be sure that we take data in the db and not in the cash
+		entityManager.clear();
+		//read movie and artist from database
+		var optArtistRead = artistRepository.findById(idArtist);
+		var optMovieRead = movieRepository.findById(idMovie);
+		assertTrue(optArtistRead.isPresent());
+		assertTrue(optMovieRead.isPresent());
+		var artistRead=optArtistRead.get();
+		var movieRead =optMovieRead.get();
+		System.out.println("Read : "+artistRead);
+		System.out.println("Read : "+movieRead+" with director "+movieRead.getDirector());
+		
+		//Set association
+		movieRead.setDirector(artistRead);
+		// synchroniez Jpa Repository
+//		update
+//        movie 
+//    set
+//        id_director=?,
+//        duration=?,
+//        title=?,
+//        year=? 
+//    where
+//        id=?
+		movieRepository.flush();
+		
+	}
 
 }
