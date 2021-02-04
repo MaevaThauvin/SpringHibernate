@@ -41,5 +41,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer>{
 	List<Movie> findByDurationIsNull();
 	
 	List<Movie> findByYearLessThanEqual(int max);
+	
+	List<Movie>findByDirectorName(String director);
 
 }
