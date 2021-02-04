@@ -86,16 +86,18 @@ class MovieRepositoryDirectorUpdatingTest {
 		//Set association
 		movieRead.setDirector(artistRead);
 		// synchroniez Jpa Repository
-//		update
-//        movie 
-//    set
-//        id_director=?,
-//        duration=?,
-//        title=?,
-//        year=? 
-//    where
-//        id=?
+		//		update
+		//        movie 
+		//    set
+		//        id_director=?,
+		//        duration=?,
+		//        title=?,
+		//        year=? 
+		//    where
+		//        id=?
 		movieRepository.flush();
+		
+		//TODO: empty cache and read data to check director association
 		
 	}
 

@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import movieapp.entity.Artist;
 import movieapp.entity.Movie;
+import movieapp.persistence.ArtistRepository;
 import movieapp.persistence.MovieRepository;
 
 @Transactional
@@ -28,6 +30,9 @@ public class MovieController {
 	
 	@Autowired
 	private MovieRepository movieRepository;	
+	
+	@Autowired
+	private ArtistRepository artistRepository;
 	
 	/**
 	 * url /api/movies
@@ -124,6 +129,53 @@ public class MovieController {
 		 });
 		// TODO persist modified object
 		return optMovieDb;
+	}
+	
+	/**
+	 * programmation impératif
+	 * path /api/movies.director?mid=1&did=3
+	 * @param <Optional>
+	 * @param idDirector
+	 * @param idMovie
+	 * @return
+	 */
+	@PutMapping("/director")
+	public Optional<Movie> setDirector(@RequestParam("mid") int idMovie,
+			@RequestParam("did") int idDirector) {
+		Optional<Movie> optMovieRead = movieRepository.findById(idMovie);
+		Optional<Artist> optDirectorRead = artistRepository.findById(idDirector);
+		
+		if(optMovieRead.isEmpty() || optDirectorRead.isEmpty()) {
+			return Optional.empty();
+		}
+		Artist directorRead = optDirectorRead.get();
+		Movie movieRead = optMovieRead.get();
+		
+		movieRead.setDirector(directorRead);
+		return Optional.of(movieRead);
+
+		
+//		var directorRead = artistRepository.findById(idDirector).map(d->d.getId(); return d;});
+		
+//		return movieRepository.findById(idMovie).map(m->{m.setDirector(directorRead);return m;});
+		
+	}
+	/**
+	 * same thing in functional programming
+	 * @param idMovie
+	 * @param idDirector
+	 * @return
+	 */
+	
+	@PutMapping("/director2")
+	public Optional<Movie> setDirector2(@RequestParam("mid") int idMovie,
+			@RequestParam("did") int idDirector) {
+				
+		
+		return movieRepository.findById(idMovie)
+				.flatMap(m-> artistRepository.findById(idDirector)
+						.map(a-> {m.setDirector(a);return m;}));
+		//{m.setDirector(directorRead);return m;}
 	}
 	
 	@DeleteMapping
