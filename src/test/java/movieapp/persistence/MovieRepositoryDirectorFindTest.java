@@ -70,6 +70,49 @@ class MovieRepositoryDirectorFindTest {
 		entityManager.clear(); //vider le cache
 		
 	}
+	
+	@Test
+	void testFindMovieWithActors() {
+		int idMovie = movieH.getId();
+		var movie = movieRepository.getOne(idMovie);
+		var actors = movie.getActors();
+		System.out.println("Movie "+movie+" with actors: "+ actors);
+		assertEquals(2, actors.size());
+	}
+	
+	@Test
+	void testFindMovieWithNoActors() {
+		int idMovie = movieA.getId();
+		var movie = movieRepository.getOne(idMovie);
+		var actors = movie.getActors();
+		System.out.println("Movie "+movie+" with actors: "+ actors);
+		assertEquals(0, actors.size());
+	}
+	
+	@Test
+	void testFindByActor() {
+		//given
+		String name = "Clint Eastwood";
+		//when
+		List<Movie> moviesFound = movieRepository.findByActorsName(name);
+		// assert		
+		System.out.println(moviesFound);
+		
+		//TODO: check found 2 movies all in which Clint plays
+		assertEquals(2, moviesFound.size());
+//		assertAll(
+//				moviesFound.stream().map(Movie::getDirector)
+//			.map(Artist::getName)
+//			.map(n -> () -> assertEquals(name, n, "director name")));
+		for (var m: moviesFound) {
+			var actors = m.getActors();
+			assertTrue(
+					actors.stream()
+					.anyMatch(a->a.getName().equals(name))
+					, "at least one actor named clint Eastwood");		
+			}
+		
+	}
 		
 
 	@Test

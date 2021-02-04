@@ -38,7 +38,7 @@ public class Movie {
 		this.duration = duration;
 	}
 	
-	@Transient
+	@ManyToMany
 	public List<Artist> getActors() {
 		return actors;
 	}
