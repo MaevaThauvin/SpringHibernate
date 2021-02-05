@@ -99,5 +99,33 @@ class HibernateQueriesTest {
 				.getResultStream()
 				.forEach(System.out::println);
 	}
+	
+	@Test
+	void test_select_movie_with_director_named() {
+		entityManager.createQuery(
+				"select m from Movie m join m.director a where a.name = :name",
+				Movie.class)
+		//select movie0_.id as id1_0_, movie0_.id_director as id_direc5_0_, movie0_.duration as duration2_0_, movie0_.title as title3_0_, movie0_.year as year4_0_ from movies movie0_ inner join stars artist1_ on movie0_.id_director=artist1_.id where artist1_.name=?
+		.setParameter("name", "Clint Eastwood")
+		.getResultStream()
+		.forEach(System.out::println);
+		
+	}
+	
+	@Test
+	void test_select_movie_with_actor_named() {
+//		select movie0_.id as id1_0_, movie0_.id_director as id_direc5_0_, movie0_.duration as duration2_0_, movie0_.title as title3_0_, movie0_.year as year4_0_
+//		from movies movie0_
+//		inner join play actors1_ on movie0_.id=actors1_.id_movie
+//		inner join stars artist2_ on actors1_.id_actor=artist2_.id 
+//		where artist2_.name=?
+		entityManager.createQuery(
+				"select m from Movie m join m.actors a where a.name = :name",
+				Movie.class)
+		.setParameter("name", "Clint Eastwood")
+		.getResultStream()
+		.forEach(System.out::println);
+		
+	}
 
 }
