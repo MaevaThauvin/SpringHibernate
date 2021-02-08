@@ -2,7 +2,9 @@ package movieapp.persistence.hibernate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -121,11 +123,48 @@ class HibernateQueriesTest {
 //		where artist2_.name=?
 		entityManager.createQuery(
 				"select m from Movie m join m.actors a where a.name = :name",
-				Movie.class)
+				Movie.class) // renvoie des movie car Movie.class
 		.setParameter("name", "Clint Eastwood")
 		.getResultStream()
 		.forEach(System.out::println);
 		
 	}
+	
+	@Test
+	void test_movie_one_stat() {
+		//count(*)
+		TypedQuery<Long> query = entityManager.createQuery(
+//				"select count(*) from Movie m",
+				"select count(m) from Movie m",
+				Long.class);
+		Long nb_movies = query.getSingleResult();
+		System.out.println(nb_movies);
+		//min(year)
+		int minyear = entityManager.createQuery("select min(m.year) from Movie m", Integer.class).getSingleResult();
+		System.out.println("year of first movie:" +minyear);
+		//sum(duration) between year1 and year2
+		Optional<Integer> min_duration = Optional.ofNullable(entityManager.createQuery(
+				"select min(m.duration) from Movie m where m.year between :year1 and :year2",
+				Integer.class
+				).setParameter("year1",2020 ).setParameter("year2", 2029)
+		.getSingleResult());
+		System.out.println("Min duration : "+min_duration);
+		
+	}
+	
+	@Test
+	void test_movie_several_stats() {
+		var res = entityManager.createQuery(
+				"select count(*), min(m.year), max(m.year) from Movie m",
+				Object[].class
+				).getSingleResult();
+		
+		System.out.println("Movie stats: " + Arrays.toString(res) ); // "( " + res.getClass() + " )");
+		long nb_movies = (long)res[0];
+		int min_year = (int)res[1];
+		int max_year = (int)res[2];
+		System.out.println("Nb: "+ nb_movies+" ; min: " + min_year+" ; max: "+max_year);
+	}
+	
 
 }

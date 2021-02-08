@@ -26,6 +26,15 @@ class MovieRepositoryTest {
 	
 	@Autowired
 	private EntityManager entityManager;
+
+
+	@Test
+	 void testCount() {
+		long nb_movies = movieRepository.count();
+		// select count(*) as col_0_0_ from movies movie0_
+		System.out.println(nb_movies);
+		// TODO: assert nb_movies is good
+	}
 	
 	@Test
 	void testFindByTitle() {
