@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import movieapp.dto.MovieStat;
+import movieapp.dto.NameYearTitle;
 import movieapp.entity.Artist;
 import movieapp.entity.Movie;
 
@@ -166,5 +170,48 @@ class HibernateQueriesTest {
 		System.out.println("Nb: "+ nb_movies+" ; min: " + min_year+" ; max: "+max_year);
 	}
 	
+	@Test
+	void test_movie_deveral_stats_bis() {
+		var res = entityManager.createQuery(
+				"select count(*), min(m.year), max(m.year) from Movie m",
+				Tuple.class
+				).getSingleResult();
+		
+		System.out.println("Movie stats: " + res ); // "( " + res.getClass() + " )");
+		long nb_movies = res.get(0, Long.class);
+		int min_year = res.get(1, Integer.class);
+		int max_year = res.get(2, Integer.class);;
+		System.out.println("Nb: "+ nb_movies+" ; min: " + min_year+" ; max: "+max_year);
+	}
+	
+	@Test
+	void test_movie_deveral_stats_bis_with_DTO() {
+		var res = entityManager.createQuery(
+				"select new movieapp.dto.MovieStat(count(*), min(m.year), max(m.year)) from Movie m",
+				MovieStat.class
+				).getSingleResult();
+		
+		System.out.println("Movie stats: " + res ); // "( " + res.getClass() + " )");
+		long nb_movies = res.getCount();
+		int min_year = res.getMin_year();
+		int max_year = res.getMax_year();
+		System.out.println("Nb: "+ nb_movies+" ; min: " + min_year+" ; max: "+max_year);
+	}
+	
+	@Test
+	void test_movie_projection() {
+		List<NameYearTitle> res = entityManager.createQuery(
+				"select new movieapp.dto.NameYearTitle(a.name, m.year, m.title) from Movie m join m.actors a where a.name like :name order by m.year",
+				NameYearTitle.class
+				)
+		.setParameter("name", "John Wayne")
+		.getResultStream()
+		.limit(10)
+		.collect(Collectors.toList());
+		res.forEach(nyt -> System.out.println(nyt.getName()
+				+" ; " + nyt.getYear()
+				+" ; " + nyt.getTitle()));
+		
+	}
 
 }
