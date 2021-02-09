@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -70,4 +71,42 @@ class SpringQueriesTest {
 		int max_year = stats.getMax_year();
 		System.out.println("Nb: "+ nb_movies+" ; min: " + min_year+" ; max: "+max_year);
 	}
+	
+	@ParameterizedTest
+	@ValueSource(strings = {
+			"Clint Eastwood", 
+			"Tarantino"})
+	void test_filmography(String name) {
+		//String name = "Clint Eastwood";
+		artistRepository.filmographyActor(name).forEach(
+				nyt -> System.out.println(nyt.getName()
+				+" ; " + nyt.getYear()
+				+" ; " + nyt.getTitle()
+				+ " ; " + nyt.getClass()));
+	}
+	
+	@Test
+	void test_countMoviesByYear() {
+		Long countT = 10L;
+		Integer year = 2019;
+		artistRepository.countMoviesByYear(countT, year).forEach( msby -> System.out.println("Year : "+msby.getYear()+" ; Count :" + msby.getCountT()));
+	}
+	
+	@Test
+	void test_directorCountMinMax() {
+		artistRepository.directorCountMinMax().limit(40).forEach(a->System.out.println("Director : "+a.getDirector()+" ; nb Movies : "+ a.getCountT()+
+				" ; Year min : "+ a.getMinYear()+" ; Year max : "+ a.getMaxYear()));
+	}
+	
+//	@Test
+//	void test_actorCountMinMax() {
+//		artistRepository.actorCountMinMax().forEach(a -> System.out.println("Actor : "+a.getActor()+" ; Count : "+a.getCountT()+" ; Min Year : "+a.getMin()+" ; Max Year : "+a.getMax()));
+//		}
+	
+
+	@Test
+	void test_artistCountMinMax() {
+		artistRepository.artistCountMinMax().forEach(a -> System.out.println("Actor id : "+a.getActor().getId()+" name: "+a.getActor().getName()+" ; Count : "+a.getCountT()+" ; Min Year : "+a.getMin()+" ; Max Year : "+a.getMax()));
+		}
+	
 }

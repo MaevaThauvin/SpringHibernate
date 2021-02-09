@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import movieapp.dto.ArtistCountMinMax;
 import movieapp.dto.DirectorCountMinMax;
 import movieapp.dto.MovieStat;
 import movieapp.dto.MoviesCountYear;
@@ -253,6 +254,16 @@ class HibernateQueriesTest {
 		.forEach(a->System.out.println("Director : "+a.getDirector()+" ; nb Movies : "+ a.getCount()+
 				" ; Year min : "+ a.getMinYear()+" ; Year max : "+ a.getMaxYear()));
 		
+	}
+	
+	//stats by actor (count, min(year), max(year)) order by count desc
+	@Test
+	void test_movie_stats_by_actor() {
+		entityManager.createQuery("select new movieapp.dto.ActorCountMinMax(a, count(*), min(year), max(year)) from Movie m join m.actors a group by a order by count(*) desc",
+				ArtistCountMinMax.class)
+		.getResultStream()
+		.limit(40)
+		.forEach(a -> System.out.println("Actor : "+a.getActor()+" ; Count : "+a.getCountT()+" ; Min Year : "+a.getMin()+" ; Max Year : "+a.getMax()));
 	}
 	
 	// stats by actor (count, min(year), max(year) order by count desc
