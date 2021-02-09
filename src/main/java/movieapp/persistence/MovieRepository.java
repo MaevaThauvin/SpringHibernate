@@ -1,10 +1,14 @@
 package movieapp.persistence;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import movieapp.dto.MovieStat;
 import movieapp.entity.Movie;
 
 // paramètres de généricité :
@@ -45,5 +49,14 @@ public interface MovieRepository extends JpaRepository<Movie, Integer>{
 	List<Movie>findByDirectorName(String director);
 
 	List<Movie> findByActorsName(String name);
+	
+	@Query("select coalesce(sum(m.duration),0) from Movie m where m.year between :yearMin and :yearMax")
+	long totalDuration(int yearMin, int yearMax);
+	
+	@Query("select avg(m.duration) from Movie m where m.year between ?1 and ?2")
+	Optional<Double> averageDuration(int yearMin, int yearMax);
+	
+	@Query("select new movieapp.dto.MovieStat(count(*), min(m.year), max(m.year)) from Movie m")
+	MovieStat statistics();
 
 }

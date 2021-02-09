@@ -22,7 +22,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import movieapp.dto.DirectorCountMinMax;
 import movieapp.dto.MovieStat;
+import movieapp.dto.MoviesCountYear;
 import movieapp.dto.NameYearTitle;
 import movieapp.entity.Artist;
 import movieapp.entity.Movie;
@@ -211,7 +213,59 @@ class HibernateQueriesTest {
 		res.forEach(nyt -> System.out.println(nyt.getName()
 				+" ; " + nyt.getYear()
 				+" ; " + nyt.getTitle()));
+	}
+	
+	//nb movies by year (params: thresholdCount, thresholdYear) order by year/count desc
+	@Test
+	void test_movie_stats_by_year() {
+		int year = 2019;
+		long countT = 10;
+		var res = entityManager.createQuery(
+				"select new movieapp.dto.MoviesCountYear(count(*), m.year) from Movie m where m.year >= :year group by m.year having count(*) >= :countT order by m.year desc",
+				//"select count(*), m.year from Movie m where m.year >= :year group by m.year having count(*) >= :countT order by m.year desc",
+				//Object[].class
+				MoviesCountYear.class
+				)
+			.setParameter("year", year)
+			.setParameter("countT", countT)
+			.getResultStream()
+			.collect(Collectors.toList());
+		 res.forEach( msby -> System.out.println("Year : "+msby.getYear()+" ; Count :" + msby.getCount()));
+		//res.forEach( msby -> System.out.println(Arrays.toString(msby)));
 		
 	}
+	
+	//stats by director (count, min(year), max(year)) order by count desc
+	@Test
+	void test_movie_stats_by_director() {
+		entityManager.createQuery(
+				//"select d, count(*), min(m.year), max(m.year) "
+				"select new movieapp.dto.DirectorCountMinMax(d, count(*), min(m.year), max(m.year)) "
+				+ "from Movie m join m.director d group by d order by count(*) desc",
+				//DirectorCountMinMax.class
+				//Object[].class
+				DirectorCountMinMax.class
+				) 
+		.getResultStream()
+		.limit(40)
+		.collect(Collectors.toList())
+		//.forEach(a -> System.out.println(Arrays.toString(a)));
+		.forEach(a->System.out.println("Director : "+a.getDirector()+" ; nb Movies : "+ a.getCount()+
+				" ; Year min : "+ a.getMinYear()+" ; Year max : "+ a.getMaxYear()));
+		
+	}
+	
+	// stats by actor (count, min(year), max(year) order by count desc
+	@Test
+	void test_movies_recent() {
+		int deltaYear = 2;
+		var res = entityManager.createQuery(
+				"select m from Movie m where EXTRACT(YEAR FROM CURRENT_DATE) - m.year <= :deltaYear",
+				Movie.class)
+				.setParameter("deltaYear", deltaYear)
+				.getResultList();
+		System.out.println(res);
+	}
+	
 
 }
