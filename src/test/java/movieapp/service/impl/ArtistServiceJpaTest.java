@@ -15,35 +15,49 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import movieapp.dto.ArtistSimple;
 import movieapp.entity.Artist;
 import movieapp.persistence.ArtistRepository;
+import movieapp.service.IArtistService;
 
-@ExtendWith(MockitoExtension.class)
+//@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class ArtistServiceJpaTest {
 	
+	
+	ModelMapper modelMapper;
+	
 	// layer to mock
-	@Mock
+	// @Mock : pure mockito
+	@MockBean // mock with spring IOC
 	ArtistRepository artistRepository;
 	
 	// layer to test using layer mocked
-	@InjectMocks
-	ArtistServiceJpa artistService;
+	// @InjectMocks : pure mockito
+	@Autowired
+	IArtistService artistService;
 
 	@Test
-	void testGetById() {
+	void testGetByIdPresent() {
 		// given
 		int id = 1;		
 		String name = "Will Smith";
 		LocalDate birthdate = LocalDate.of(1968, 9, 25);
+		
 		// perfect answer from mock
 		Artist artistEntity = new Artist(name, birthdate);
 		artistEntity.setId(id);
 		given(artistRepository.findById(id)).willReturn(Optional.of(artistEntity));
+		
 		// when
 		Optional<ArtistSimple> optArtistSimpleDto = artistService.getById(id);
 		System.out.println(optArtistSimpleDto);
+		
 		// then
 		then(artistRepository).should().findById(eq(id));
 		assertTrue(optArtistSimpleDto.isPresent());
@@ -57,15 +71,17 @@ class ArtistServiceJpaTest {
 	
 	@Test
 	void testGetByIdAbsent() {
-		//given
-		String name = "Will Smith";
-		LocalDate birthdate = LocalDate.of(1968, 9, 25);
-		Artist artistEntity = new Artist(name, birthdate);
+		// given
+		int id = 1;		
 		//perfect answer
-		//given(artistRepository.findById(id)).willReturn(Optional.empty);
-		//when
+		given(artistRepository.findById(id)).willReturn(Optional.empty());
+		// when
+		Optional<ArtistSimple> optArtistSimpleDto = artistService.getById(id);
+		// then
+		// check mock has been call
+		then(artistRepository).should().findById(eq(id));
+		assertFalse(optArtistSimpleDto.isPresent());
 		
-		//then
 	}
 
 }
