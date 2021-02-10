@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.eq;
+import static org.mockito.BDDMockito.any;
 
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +83,33 @@ class ArtistServiceJpaTest {
 		// check mock has been call
 		then(artistRepository).should().findById(eq(id));
 		assertFalse(optArtistSimpleDto.isPresent());
+		
+	}
+	
+	@Test
+	void testAddArtistSimple() {
+		// given
+		// DTO to add 
+		String name = "Will Smith";
+		LocalDate birthdate = LocalDate.of(1968, 9, 25);
+		ArtistSimple artistDtoIn = new ArtistSimple(null, name, birthdate);
+		
+		// Entity response from Mock Repository
+		int id = 1;
+		Artist artistEntity = new Artist(name, birthdate); 
+		artistEntity.setId(id);
+		given(artistRepository.save(any())).willReturn(artistEntity);
+
+		// when
+		ArtistSimple artistSimpleDtoOut = artistService.add(artistDtoIn);		
+		
+		// then
+		then(artistRepository).should().save(any()); // ask if we invoke the add method at least once 
+		assertNotNull(artistSimpleDtoOut.getId());
+		assertEquals(id, artistSimpleDtoOut.getId());
+		assertEquals(name, artistSimpleDtoOut.getName());
+		assertEquals(birthdate, artistSimpleDtoOut.getBirthdate());
+		
 		
 	}
 

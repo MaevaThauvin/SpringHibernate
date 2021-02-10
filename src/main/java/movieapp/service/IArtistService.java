@@ -7,4 +7,6 @@ import movieapp.dto.ArtistSimple;
 public interface IArtistService {
 	
 	Optional<ArtistSimple> getById(int id);
+
+	ArtistSimple add(ArtistSimple artistDto);
 }
