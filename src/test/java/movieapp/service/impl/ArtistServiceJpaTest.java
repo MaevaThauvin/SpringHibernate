@@ -105,7 +105,7 @@ class ArtistServiceJpaTest {
 		
 		// then
 		then(artistRepository).should().save(any()); // ask if we invoke the add method at least once 
-		assertNotNull(artistSimpleDtoOut.getId());
+		assertNotNull(artistSimpleDtoOut.getId()); // from repo response
 		assertEquals(id, artistSimpleDtoOut.getId());
 		assertEquals(name, artistSimpleDtoOut.getName());
 		assertEquals(birthdate, artistSimpleDtoOut.getBirthdate());

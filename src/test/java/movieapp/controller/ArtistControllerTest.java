@@ -1,8 +1,10 @@
 package movieapp.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -27,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.jayway.jsonpath.JsonPath;
 
 import movieapp.dto.ArtistSimple;
+import movieapp.entity.Artist;
 import movieapp.service.IArtistService;
 
 @WebMvcTest(ArtistController.class) // controller to test with MockMvc client
@@ -81,6 +84,30 @@ class ArtistControllerTest {
 
 		//MockMvcResultHandlers
 		//MockMvcResultMatchers
+	}
+	
+	@Test
+	void testPostAddArtistSimple() throws Exception {
+		// 1. given
+		String artistJsonIn = "{'name':'Will Smith', 'birthdate':'1968-9-25'}";
+		
+//		String name = "Will Smith";
+//		LocalDate birthdate = LocalDate.of(1968, 9, 25);
+//		ArtistSimple artistDtoIn = new ArtistSimple(null, name, birthdate);
+//		
+//		// Entity response from Mock Repository
+//		int id = 1;
+//		Artist artistEntity = new Artist(name, birthdate); 
+//		artistEntity.setId(id);
+//		given(artistService.save(any())).willReturn(artistEntity);
+		
+		// 2. when/then
+		mockMvc.perform(
+				MockMvcRequestBuilders.post(BASE_URI) //provoke Get request , build GET HTTP request
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(artistJsonIn)	
+				.accept(MediaType.APPLICATION_JSON)) // add header to my request saying I want JSON
+				.andDo(print()); // intercept request to print what happend
 	}
 
 }
