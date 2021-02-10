@@ -23,7 +23,8 @@ import movieapp.service.IMovieService;
 
 
 
-@Transactional
+
+//@Transactional   >> plus besoin car c'est le movieServiceJpa qui fait le transactional (synchro BDD)
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
@@ -49,69 +50,71 @@ public class MovieController {
 		return movieService.getAll();
 	}
 	
-//	/**
-//	 * url /api/movies/un
-//	 * @return
-//	 */
-//	@GetMapping("/{id}") //a utiliser sur des valeurs numériques
-//	@ResponseBody
-//	public Optional<MovieSimple> movie(@PathVariable("id") int id) {
-//		// return new Movie("Kabir Singh", 2019, 173);
-//		return movieService.findById(id);
-//	}
-//	
-//	/**
-//	 * path /api/movies/byTitle?t=Spectre
-//	 * @param title
-//	 * @return
-//	 */
-//	@GetMapping("/byTitle")
-//	public List<MovieSimple> moviesByTitle(@RequestParam("t") String title){
-//		return movieService.findByTitle(title);
-//	}
-//	/**
-//	 * path /api/movies/byTitleYear?t=Spectre&y=2015
-//	 * @param title
-//	 * @param year
-//	 * @return
-//	 */
-//	
-//	@GetMapping("/byTitleYear")
-//	public List<Movie> moviesByTitleYear(@RequestParam("t") String title,
-//										@RequestParam(value="y", required=false) Integer year){
-//		if(Objects.isNull(year)) {
-//			return movieRepository.findByTitle(title);
-//		}
-//		else {
-//			return movieRepository.findByTitleIgnoreCaseAndYearEquals(title, year);
-//		}
-//	}
-//	
-//	/**
-//	 * path api/movies/byYear?min=2000&max=2005
-//	 * @param min
-//	 * @param max
-//	 * @return
-//	 */
-//	@GetMapping("/byYear")
-//	public List<Movie> moviesByYearBetweenMinMax(@RequestParam(value="min", required=false) Integer min, 
-//			@RequestParam(value="max", required=false) Integer max){
-//		if(Objects.nonNull(min)) {
-//			if(Objects.nonNull(max)) {
-//				return movieRepository.findByYearBetweenOrderByYear(min, max);
-//			}
-//			else {
-//				return movieRepository.findByYearGreaterThanEqual(min);
-//			}
-//		}
-//		if(Objects.nonNull(max)) {
-//				return movieRepository.findByYearLessThanEqual(max);
-//		}
-//		else {
-//			return List.of();
-//		}
-//				
-//	}
+	/**
+	 * url /api/movies/un
+	 * @return
+	 */
+	@GetMapping("/{id}") //a utiliser sur des valeurs numériques
+	@ResponseBody
+	public Optional<MovieSimple> movie(@PathVariable("id") int id) {
+		// return new Movie("Kabir Singh", 2019, 173);
+		return movieService.getById(id);
+	}
+	
+	/**
+	 * path /api/movies/byTitle?t=Spectre
+	 * @param title
+	 * @return
+	 */
+	@GetMapping("/byTitle")
+	public List<MovieSimple> moviesByTitle(@RequestParam("t") String title){
+		return movieService.getByTitle(title);
+	}
+	
+	
+	/**
+	 * path /api/movies/byTitleYear?t=Spectre&y=2015
+	 * @param title
+	 * @param year
+	 * @return
+	 */
+	
+	@GetMapping("/byTitleYear")
+	public List<MovieSimple> moviesByTitleYear(@RequestParam("t") String title,
+										@RequestParam(value="y", required=false) Integer year){
+		if(Objects.isNull(year)) {
+			return movieService.getByTitle(title);
+		}
+		else {
+			return movieService.getByTitleIgnoreCaseAndYearEquals(title, year);
+		}
+	}
+	
+	/**
+	 * path api/movies/byYear?min=2000&max=2005
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	@GetMapping("/byYear")
+	public List<MovieSimple> moviesByYearBetweenMinMax(@RequestParam(value="min", required=false) Integer min, 
+			@RequestParam(value="max", required=false) Integer max){
+		if(Objects.nonNull(min)) {
+			if(Objects.nonNull(max)) {
+				return movieService.getByYearBetweenOrderByYear(min, max);
+			}
+			else {
+				return movieService.getByYearGreaterThanEqual(min);
+			}
+		}
+		if(Objects.nonNull(max)) {
+				return movieService.getByYearLessThanEqual(max);
+		}
+		else {
+			return List.of();
+		}		
+	}
+	
 	
 	@PostMapping
 	@ResponseBody
