@@ -1,8 +1,11 @@
 package movieapp.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.eq;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -57,6 +60,8 @@ class ArtistControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$").doesNotExist());
+		// check mock service has been called
+		then(artistService).should().getById(eq(id));
 		//MockMvcResultHandlers
 		//MockMvcResultMatchers
 	}
@@ -81,6 +86,8 @@ class ArtistControllerTest {
 				.andExpect(jsonPath("$.id").value(id))
 				.andExpect(jsonPath("$.name").value(name))
 				.andExpect(jsonPath("$.birthdate").value(birthdate.toString()));
+		// check mock service has been called
+		then(artistService).should().getById(eq(id));
 
 		//MockMvcResultHandlers
 		//MockMvcResultMatchers
@@ -89,25 +96,28 @@ class ArtistControllerTest {
 	@Test
 	void testPostAddArtistSimple() throws Exception {
 		// 1. given
-		String artistJsonIn = "{'name':'Will Smith', 'birthdate':'1968-9-25'}";
+		String name = "Will Smith";
+		LocalDate birthdate = LocalDate.of(1968,  9,  25);
+		String artistJsonIn =JsonProvider.artistJson(name, birthdate);
+		// perfect response from mock service
+		int id = 1;
+		given(artistService.add(any())).willReturn(new ArtistSimple(id, name, birthdate));
 		
-//		String name = "Will Smith";
-//		LocalDate birthdate = LocalDate.of(1968, 9, 25);
-//		ArtistSimple artistDtoIn = new ArtistSimple(null, name, birthdate);
-//		
-//		// Entity response from Mock Repository
-//		int id = 1;
-//		Artist artistEntity = new Artist(name, birthdate); 
-//		artistEntity.setId(id);
-//		given(artistService.save(any())).willReturn(artistEntity);
 		
 		// 2. when/then
-		mockMvc.perform(
-				MockMvcRequestBuilders.post(BASE_URI) //provoke Get request , build GET HTTP request
+		mockMvc.perform(post(BASE_URI) //provoke Get request , build GET HTTP request
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(artistJsonIn)	
 				.accept(MediaType.APPLICATION_JSON)) // add header to my request saying I want JSON
-				.andDo(print()); // intercept request to print what happend
+				.andDo(print()) // intercept request to print what happend
+				.andExpect(status().isOk()) // andExpect >> assertion / status : check status of the request
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)) // ask if content type is Json
+				.andExpect(jsonPath("$.id").exists()) // $ (objet que l'on reçoit / $.id get the id attribute from the object used
+				.andExpect(jsonPath("$.id").value(id ))
+				.andExpect(jsonPath("$.name").value(name))
+				.andExpect(jsonPath("$.birthdate").value(birthdate.toString()));
+		// check mock service has been called
+		then(artistService).should().add(any());
 	}
 
 }

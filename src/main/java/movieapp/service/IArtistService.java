@@ -9,4 +9,5 @@ public interface IArtistService {
 	Optional<ArtistSimple> getById(int id);
 
 	ArtistSimple add(ArtistSimple artistDto);
+	ArtistSimple getByName(String name);
 }

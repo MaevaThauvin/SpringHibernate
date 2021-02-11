@@ -36,4 +36,10 @@ public class ArtistServiceJpa implements IArtistService {
 		return modelMapper.map(artistEntityFromRepo, ArtistSimple.class); // convert entity to dto result
 	}
 
+	@Override
+	public ArtistSimple getByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
