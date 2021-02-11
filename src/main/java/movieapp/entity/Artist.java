@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,12 +25,15 @@ public class Artist {
 	private LocalDate birthdate;
 	private LocalDate deathdate;
 	
+	
 	//bidirectionnal
 	private List<Movie> directedMovies;
+	private List<Movie> playedMovies;
 	
 	public Artist() {
 		super();
 		this.directedMovies = new ArrayList<>();
+		this.playedMovies = new ArrayList<>();
 	}
 	
 	public Artist(String name) {
@@ -47,6 +51,15 @@ public class Artist {
 		this.deathdate = deathdate;
 	}
 	
+	@ManyToMany(mappedBy="actors") // mapping bidirectionnal mapping configured in Movie property actors
+	public List<Movie> getPlayedMovies() {
+		return playedMovies;
+	}
+
+	public void setPlayedMovies(List<Movie> playedMovies) {
+		this.playedMovies = playedMovies;
+	}
+
 	@OneToMany(mappedBy="director")
 	public List<Movie> getDirectedMovies() {
 		return directedMovies;
