@@ -95,6 +95,12 @@ public class MovieServiceJpa implements IMovieService {
 				.collect(Collectors.toList());
 		return movieDto;
 	}
+
+	@Override
+	public Optional<MovieSimple> update(MovieSimple movie) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 
