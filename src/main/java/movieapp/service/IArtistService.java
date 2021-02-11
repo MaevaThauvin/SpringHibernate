@@ -1,13 +1,19 @@
 package movieapp.service;
 
 import java.util.Optional;
+import java.util.Set;
 
 import movieapp.dto.ArtistSimple;
+import movieapp.entity.Artist;
 
 public interface IArtistService {
-	
+	// READ
 	Optional<ArtistSimple> getById(int id);
-
+	
+	// CREATE
 	ArtistSimple add(ArtistSimple artistDto);
-	ArtistSimple getByName(String name);
+	Set<ArtistSimple> getByName(String name);
+
+	// UPDATE
+	Optional<ArtistSimple> update(ArtistSimple artist);
 }

@@ -8,7 +8,10 @@ import static org.mockito.BDDMockito.any;
 
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -114,11 +117,45 @@ class ArtistServiceJpaTest {
 	@Test
 	void testGetByName() {
 		// given
-		String name = "Will Smith";
+		String name = "Steve McQueen";
+		
+		//Entity response from Mock Repository
+		given(artistRepository.findByNameIgnoreCase(eq(name))).willReturn(Set.of(
+				new Artist(name, LocalDate.of(1930, 03, 24)),
+				new Artist(name, LocalDate.of(1930, 03, 24))
+				));
 		
 		// when
+		Set<ArtistSimple> artistSimpleDtoOut = artistService.getByName(name);
 		
 		// then
+		then(artistRepository).should().findByNameIgnoreCase(eq(name)); // ask if we invoke the add method at least once 
+		assertEquals(2, artistSimpleDtoOut.size());
+		assertAll(artistSimpleDtoOut.stream().map(
+				a -> () -> assertEquals(name, a.getName()))); // from repo response
+		
+	}
+	
+	//TODO : to be implemented
+	@Test
+	void testUpdateArtistSimple() {
+		// given
+		int id =1;
+		String name = "Will Smith";
+		LocalDate birthdate = LocalDate.of(1968, 9, 25);
+		Artist artistEntity= new Artist(name, birthdate);
+		given(artistRepository.findById(artistEntity.getId())).willReturn(Optional.of(artistEntity));
+		
+		//TODO: convert artistEntity to artistSimple
+		// when
+//		Optional<ArtistSimple> artistSimpleDtOut = artistService.update(artistEntity);
+		
+		// then
+		then(artistRepository).should().findById(eq(id));
+		assertAll(
+				() -> assertEquals(name, artistEntity.getName()),
+				() -> assertEquals(birthdate, artistEntity.getBirthdate())						
+		);
 	}
 
 }

@@ -13,13 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-
-
-
-import java.awt.print.Printable;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +27,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.jayway.jsonpath.JsonPath;
 
 import movieapp.dto.ArtistSimple;
-import movieapp.entity.Artist;
 import movieapp.service.IArtistService;
 
 @WebMvcTest(ArtistController.class) // controller to test with MockMvc client
@@ -116,8 +112,34 @@ class ArtistControllerTest {
 				.andExpect(jsonPath("$.id").value(id ))
 				.andExpect(jsonPath("$.name").value(name))
 				.andExpect(jsonPath("$.birthdate").value(birthdate.toString()));
+		
 		// check mock service has been called
 		then(artistService).should().add(any());
+	}
+	
+	@Test
+	void testGetGetByName() throws Exception {
+		// 1. given
+		String name = "Steve McQueen";
+		int id =1;
+		
+		given(artistService.getByName(eq(name))).willReturn(Set.of(
+				new ArtistSimple(id, name, LocalDate.of(1930, 03, 24)),
+				new ArtistSimple(id, name, LocalDate.of(1930, 03, 24))
+				));
+		
+
+		// 2. when / then
+		mockMvc.perform(get(BASE_URI+"/byName").param("name", name))
+			.andDo(print())
+			.andExpect(status().isOk()) // andExpect >> assertion / status : check status of the request
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON)) 
+			//.andExpect(jsonPath("$.name").value(name))
+			.andExpect(jsonPath("$").isArray())
+			.andExpect(jsonPath("$", Matchers.hasSize(2)))
+			.andExpect(jsonPath("$[*].name", Matchers.everyItem(Matchers.is(name))));
+		
+		then(artistService).should().getByName(eq(name));
 	}
 
 }
