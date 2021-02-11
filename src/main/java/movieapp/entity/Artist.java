@@ -2,12 +2,16 @@ package movieapp.entity;
 
 import java.time.LocalDate;
 //import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,8 +24,12 @@ public class Artist {
 	private LocalDate birthdate;
 	private LocalDate deathdate;
 	
+	//bidirectionnal
+	private List<Movie> directedMovies;
+	
 	public Artist() {
 		super();
+		this.directedMovies = new ArrayList<>();
 	}
 	
 	public Artist(String name) {
@@ -33,12 +41,21 @@ public class Artist {
 	}
 	
 	public Artist(String name, LocalDate birthdate, LocalDate deathdate) {
-		super();
+		this();
 		this.name = name;
 		this.birthdate = birthdate;
 		this.deathdate = deathdate;
 	}
 	
+	@OneToMany(mappedBy="director")
+	public List<Movie> getDirectedMovies() {
+		return directedMovies;
+	}
+
+	public void setDirectedMovies(List<Movie> directedMovies) {
+		this.directedMovies = directedMovies;
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public Integer getId() {
