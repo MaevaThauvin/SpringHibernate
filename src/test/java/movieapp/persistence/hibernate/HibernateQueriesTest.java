@@ -29,6 +29,7 @@ import movieapp.dto.MoviesCountYear;
 import movieapp.dto.NameYearTitle;
 import movieapp.entity.Artist;
 import movieapp.entity.Movie;
+import movieapp.entity.Play;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE) //don't replace DB of ap with H2
@@ -129,12 +130,47 @@ class HibernateQueriesTest {
 //		inner join stars artist2_ on actors1_.id_actor=artist2_.id 
 //		where artist2_.name=?
 		entityManager.createQuery(
-				"select m from Movie m join m.actors a where a.name = :name",
+				//"select m from Movie m join m.plays p join p.actor a where a.name = :name",
+				"select m from Play p join p.movie m join p.actor a where a.name = :name",
 				Movie.class) // renvoie des movie car Movie.class
 		.setParameter("name", "Clint Eastwood")
 		.getResultStream()
 		.forEach(System.out::println);
 		
+	}
+	
+	//1. trouver les acteurs qui ont joués James Bond (Artist)
+	
+	@Test
+	public void test_select_actor_playing_role() {
+		String role="James Bond";
+		entityManager.createQuery(
+				"select distinct a from Play p join p.actor a where p.role like :role",
+				Artist.class
+				)
+		.setParameter("role", role)
+		.getResultStream()
+		.forEach(System.out::println);
+	}
+	
+	// 2. trouver les acteurs, titres film où ils ont jourés James Bond (projection)
+	
+	@Test
+	public void test_select_actor_playing_role_count() {
+		String role="James Bond";
+		var actors = entityManager.createQuery(
+				"select a.name as name, count(*) as nb_movies, "
+				+ "min(year) as min_year, max(year) as max_year "
+				+ "from Play p join p.actor a join p.movie m "
+				+ "where p.role like :role "
+				+ "group by a "
+				+ "order by min(year)",
+				Object[].class
+				)
+		.setParameter("role", role)
+		.getResultList();
+		System.out.println("Actors playing "+ role +" : ");
+		actors.forEach(row -> System.out.println(Arrays.toString(row)));
 	}
 	
 	@Test
