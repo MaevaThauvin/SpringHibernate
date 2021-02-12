@@ -48,7 +48,7 @@ public interface MovieRepository extends JpaRepository<Movie, Integer>{
 	
 	List<Movie>findByDirectorName(String director);
 
-	List<Movie> findByActorsName(String name);
+//	List<Movie> findByActorsName(String name);
 	
 	@Query("select coalesce(sum(m.duration),0) from Movie m where m.year between :yearMin and :yearMax")
 	long totalDuration(int yearMin, int yearMax);

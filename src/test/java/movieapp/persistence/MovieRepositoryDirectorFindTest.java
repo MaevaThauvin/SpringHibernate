@@ -122,10 +122,10 @@ class MovieRepositoryDirectorFindTest {
 		assertEquals(0, actors.size());
 	}
 	
-	@Test
-	void testFindByActor() {
+//	@Test
+//	void testFindByActor() {
 		//given
-		String name = "Clint Eastwood";
+//		String name = "Clint Eastwood";
 		//when
 //		 select
 //	        movie0_.id as id1_0_,
@@ -143,25 +143,25 @@ class MovieRepositoryDirectorFindTest {
 //	            on actors1_.id_actor=artist2_.id 
 //	    where
 //	        artist2_.name=?
-		List<Movie> moviesFound = movieRepository.findByActorsName(name);
+//		List<Movie> moviesFound = movieRepository.findByActorsName(name);
 		// assert		
-		System.out.println(moviesFound);
-		
-		//TODO: check found 2 movies all in which Clint plays
-		assertEquals(2, moviesFound.size());
-//		assertAll(
-//				moviesFound.stream().map(Movie::getDirector)
-//			.map(Artist::getName)
-//			.map(n -> () -> assertEquals(name, n, "director name")));
-		for (var m: moviesFound) {
-			var actors = m.getActors();
-			assertTrue(
-					actors.stream()
-					.anyMatch(a->a.getName().equals(name))
-					, "at least one actor named clint Eastwood");		
-			}
-		
-	}
+//		System.out.println(moviesFound);
+//		
+//		//TODO: check found 2 movies all in which Clint plays
+//		assertEquals(2, moviesFound.size());
+////		assertAll(
+////				moviesFound.stream().map(Movie::getDirector)
+////			.map(Artist::getName)
+////			.map(n -> () -> assertEquals(name, n, "director name")));
+//		for (var m: moviesFound) {
+//			var actors = m.getActors();
+//			assertTrue(
+//					actors.stream()
+//					.anyMatch(a->a.getName().equals(name))
+//					, "at least one actor named clint Eastwood");		
+//			}
+//		
+//	}
 		
 
 	@Test

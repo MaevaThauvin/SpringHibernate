@@ -72,18 +72,18 @@ class SpringQueriesTest {
 		System.out.println("Nb: "+ nb_movies+" ; min: " + min_year+" ; max: "+max_year);
 	}
 	
-	@ParameterizedTest
-	@ValueSource(strings = {
-			"Clint Eastwood", 
-			"Tarantino"})
-	void test_filmography(String name) {
-		//String name = "Clint Eastwood";
-		artistRepository.filmographyActor(name).forEach(
-				nyt -> System.out.println(nyt.getName()
-				+" ; " + nyt.getYear()
-				+" ; " + nyt.getTitle()
-				+ " ; " + nyt.getClass()));
-	}
+//	@ParameterizedTest
+//	@ValueSource(strings = {
+//			"Clint Eastwood", 
+//			"Tarantino"})
+//	void test_filmography(String name) {
+//		//String name = "Clint Eastwood";
+//		artistRepository.filmographyActor(name).forEach(
+//				nyt -> System.out.println(nyt.getName()
+//				+" ; " + nyt.getYear()
+//				+" ; " + nyt.getTitle()
+//				+ " ; " + nyt.getClass()));
+//	}
 	
 	@Test
 	void test_countMoviesByYear() {
@@ -104,9 +104,9 @@ class SpringQueriesTest {
 //		}
 	
 
-	@Test
-	void test_artistCountMinMax() {
-		artistRepository.artistCountMinMax().forEach(a -> System.out.println("Actor id : "+a.getActor().getId()+" name: "+a.getActor().getName()+" ; Count : "+a.getCountT()+" ; Min Year : "+a.getMin()+" ; Max Year : "+a.getMax()));
-		}
+//	@Test
+//	void test_artistCountMinMax() {
+//		artistRepository.artistCountMinMax().forEach(a -> System.out.println("Actor id : "+a.getActor().getId()+" name: "+a.getActor().getName()+" ; Count : "+a.getCountT()+" ; Min Year : "+a.getMin()+" ; Max Year : "+a.getMax()));
+//		}
 	
 }
