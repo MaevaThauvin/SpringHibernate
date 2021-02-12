@@ -5,7 +5,10 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,11 +36,15 @@ public class Movie {
 	private Artist director;
 	private List<Artist> actors;
 	private List<Play> plays;
+	private List<String> genres;
+	
+	private ImageColor imageColor;
 	
 	public Movie() {
 		super();
 		actors = new ArrayList<>();
 		plays = new ArrayList<>();
+		genres = new ArrayList<>();
 	}
 
 	public Movie(String title, Integer year, Integer duration) {
@@ -45,8 +52,29 @@ public class Movie {
 		this.title = title;
 		this.year = year;
 		this.duration = duration;
-	}
+	}	
 	
+	@ Enumerated(EnumType.STRING) // Ordinal or String 
+	@Column(name="color")
+	public ImageColor getImageColor() {
+		return imageColor;
+	}
+
+	public void setImageColor(ImageColor imageColor) {
+		this.imageColor = imageColor;
+	}
+
+	@ElementCollection //Cette collection est une collection de type simple 
+	// pas besoin de définir un iD
+	@Column(name="genre")
+	public List<String> getGenres() {
+		return genres;
+	}
+
+	public void setGenres(List<String> genres) {
+		this.genres = genres;
+	}
+
 	@Id // primary key (unique + not null)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer getId() {
